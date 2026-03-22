@@ -89,7 +89,13 @@
                 overlay.style.display = 'none';
 
                 // Start the MindAR camera and tracking system
-                sceneEl.systems["mindar-image-system"].start();
+                if (sceneEl.hasLoaded) {
+                    sceneEl.systems["mindar-image-system"].start();
+                } else {
+                    sceneEl.addEventListener('loaded', function () {
+                        sceneEl.systems["mindar-image-system"].start();
+                    });
+                }
             });
 
             // Event listener: When the image target is found
