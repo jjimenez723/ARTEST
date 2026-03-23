@@ -63,9 +63,9 @@
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
         <!-- 4. The AR Target -->
-        <!-- Width is typically normalized to 1 in MindAR. 16:9 ratio means height = 9/16 = 0.5625 -->
+        <!-- Width is typically normalized to 1 in MindAR. Height is set dynamically based on video dimensions -->
         <a-entity id="ar-target" mindar-image-target="targetIndex: 0">
-            <a-video src="#vid" position="0 0 0" width="1" height="0.5625" rotation="0 0 0">
+            <a-video id="ar-video" src="#vid" position="0 0 0" width="1" height="1" rotation="0 0 0">
             </a-video>
         </a-entity>
     </a-scene>
@@ -78,6 +78,13 @@
             const startBtn = document.getElementById('start-btn');
             const video = document.getElementById('vid');
             const arTarget = document.getElementById('ar-target');
+            const arVideo = document.getElementById('ar-video');
+
+            // Dynamically set AR video dimensions based on actual video aspect ratio
+            video.addEventListener('loadedmetadata', function () {
+                const aspectRatio = video.videoHeight / video.videoWidth;
+                arVideo.setAttribute('height', aspectRatio);
+            });
 
             // Mobile Autoplay Handling: User must interact with document first
             startBtn.addEventListener('click', function () {
