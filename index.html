@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AR T-Shirt</title>
+    <title>Luxury Property AR Experience</title>
 
     <!-- 1. Library Setup: Import A-Frame and MindAR Extension -->
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
@@ -12,31 +12,113 @@
 
     <!-- 5. Mobile Autoplay Handling (Styling) -->
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap');
+
         #ui-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: linear-gradient(135deg, rgba(8, 10, 14, 0.95), rgba(15, 23, 42, 0.98));
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            /* Ensure it stays above everything */
+            font-family: 'Inter', sans-serif;
+        }
+
+        .content-box {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 48px 40px;
+            max-width: 85%;
+            width: 380px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .content-box h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            margin-top: 0;
+            margin-bottom: 24px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: #f8fafc;
+            line-height: 1.2;
+        }
+
+        .content-box p {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            color: #94a3b8;
+            font-weight: 300;
+        }
+
+        .instructions {
+            text-align: left;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 36px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+            color: #e2e8f0;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .instructions li {
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+        
+        .instructions li:last-child {
+            margin-bottom: 0;
+        }
+
+        .instructions li::marker {
+            color: #d4af37;
+            font-weight: 500;
         }
 
         #start-btn {
-            padding: 15px 30px;
-            font-size: 22px;
-            font-family: sans-serif;
-            font-weight: bold;
-            background-color: #ffffff;
-            color: #000000;
+            display: block;
+            width: 100%;
+            padding: 16px 32px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 500;
+            background: linear-gradient(to right, #d4af37, #f3e5ab, #d4af37);
+            background-size: 200% auto;
+            color: #1a1a1a;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 20px -5px rgba(212, 175, 55, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        #start-btn:hover {
+            background-position: right center;
+            box-shadow: 0 15px 25px -5px rgba(212, 175, 55, 0.5);
+            transform: translateY(-2px);
+        }
+
+        #start-btn:active {
+            transform: translateY(1px);
         }
     </style>
 </head>
@@ -44,7 +126,20 @@
 <body>
     <!-- 5. Mobile Autoplay Handling (HTML UI) -->
     <div id="ui-overlay">
-        <button id="start-btn">Tap to Start AR</button>
+        <div class="content-box">
+            <h1>Immersive Property Tour</h1>
+            <p>Experience this luxury home in augmented reality.</p>
+            
+            <div class="instructions">
+                <ol>
+                    <li>Tap the <strong>Start Experience</strong> button below.</li>
+                    <li><strong>Allow</strong> the website to access your camera when prompted.</li>
+                    <li>Hold your phone up to the <strong>property sign</strong> to begin the tour.</li>
+                </ol>
+            </div>
+            
+            <button id="start-btn">Start Experience</button>
+        </div>
     </div>
 
     <!-- 2. Scene Configuration -->
