@@ -85,7 +85,7 @@
             margin-bottom: 12px;
             padding-left: 4px;
         }
-        
+
         .instructions li:last-child {
             margin-bottom: 0;
         }
@@ -158,19 +158,103 @@
         #agent-link:active {
             transform: translateY(1px);
         }
+
+        /* Landscape Optimization for Mobile Devices */
+        @media (orientation: landscape) and (max-height: 600px) {
+            #ui-overlay {
+                align-items: center;
+                padding: 16px;
+                overflow-y: auto;
+            }
+            
+            .content-box {
+                padding: 24px;
+                width: 100%;
+                max-width: 680px;
+                display: grid;
+                grid-template-columns: 1fr 1.2fr;
+                gap: 24px;
+                align-items: center;
+                text-align: left;
+                margin: auto;
+            }
+            
+            .content-box h1 {
+                font-size: 20px;
+                margin-bottom: 8px;
+            }
+            
+            .content-box p {
+                font-size: 13px;
+                margin-bottom: 16px;
+            }
+            
+            .instructions {
+                margin-bottom: 0;
+                padding: 16px;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            
+            .instructions ol {
+                font-size: 12px;
+                line-height: 1.5;
+            }
+            
+            .instructions li {
+                margin-bottom: 8px;
+            }
+            
+            #start-btn {
+                padding: 12px 20px;
+                font-size: 13px;
+                width: 100%;
+            }
+            
+            .content-box > h1 {
+                grid-column: 1;
+                grid-row: 1;
+            }
+            
+            .content-box > p {
+                grid-column: 1;
+                grid-row: 2;
+            }
+            
+            .content-box > button {
+                grid-column: 1;
+                grid-row: 3;
+                align-self: end;
+            }
+            
+            .content-box > .instructions {
+                grid-column: 2;
+                grid-row: 1 / 4;
+            }
+            
+            #agent-link {
+                top: 12px;
+                right: 12px;
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 
 <body>
     <!-- Persistent Link to Agent Website -->
-    <a href="https://dennis-davila.com/" id="agent-link" target="_blank" rel="noopener noreferrer">Visit Website</a>
+    <a href="https://dennis-davila.com/" id="agent-link" target="_blank" rel="noopener noreferrer">Visit Realtor's
+        Website</a>
 
     <!-- 5. Mobile Autoplay Handling (HTML UI) -->
     <div id="ui-overlay">
         <div class="content-box">
             <h1>Immersive Property Tour</h1>
             <p>Experience this luxury home in augmented reality.</p>
-            
+
             <div class="instructions">
                 <ol>
                     <li>Tap the <strong>Start Experience</strong> button below.</li>
@@ -178,7 +262,7 @@
                     <li>Hold your phone up to the <strong>property sign</strong> to begin the tour.</li>
                 </ol>
             </div>
-            
+
             <button id="start-btn">Start Experience</button>
         </div>
     </div>
