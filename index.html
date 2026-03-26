@@ -268,8 +268,8 @@
     </div>
 
     <!-- 2. Scene Configuration -->
-    <!-- Note: autoStart is set to false so it waits for the user tap -->
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: false;" color-space="sRGB"
+    <!-- Note: autoStart is set to false so it waits for the user tap. filterMinCF and filterBeta reduce jitter. -->
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.0001; filterBeta: 0.001;" color-space="sRGB"
         renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: false">
 
