@@ -120,10 +120,48 @@
         #start-btn:active {
             transform: translateY(1px);
         }
+
+        #agent-link {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            top: max(24px, env(safe-area-inset-top));
+            right: max(24px, env(safe-area-inset-right));
+            z-index: 10000;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 30px;
+            padding: 12px 24px;
+            color: #f8fafc;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        #agent-link:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.8);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        #agent-link:active {
+            transform: translateY(1px);
+        }
     </style>
 </head>
 
 <body>
+    <!-- Persistent Link to Agent Website -->
+    <a href="https://dennis-davila.com/" id="agent-link" target="_blank" rel="noopener noreferrer">Visit Website</a>
+
     <!-- 5. Mobile Autoplay Handling (HTML UI) -->
     <div id="ui-overlay">
         <div class="content-box">
