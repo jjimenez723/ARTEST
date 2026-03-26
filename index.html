@@ -345,16 +345,17 @@
 
             // Handle device orientation changes (common issue on iOS devices)
             window.addEventListener('orientationchange', () => {
-                // iOS Safari often pauses videos and messes up canvas alignment on rotation.
-                // We use a small timeout to let the new window dimensions settle.
-                setTimeout(() => {
-                    // Force the A-Frame scene to resize and update its projection matrix
-                    if (sceneEl.resize) {
-                        sceneEl.resize();
-                    } else {
+                // iOS Safari takes time to correctly report new window.innerWidth/Height after rotation.
+                // If MindAR calculates its projection matrix too early, the AR objects become skewed or float off-center.
+                // We dispatch 'resize' events precisely over time to guarantee MindAR correctly re-evaluates the layout.
+                [100, 300, 600, 1000].forEach(delay => {
+                    setTimeout(() => {
                         window.dispatchEvent(new Event('resize'));
-                    }
+                    }, delay);
+                });
 
+                // Wait until the layout has mostly settled to unpause playback streams
+                setTimeout(() => {
                     // Find all video elements in the DOM
                     const allVideos = document.querySelectorAll('video');
                     allVideos.forEach(v => {
@@ -369,7 +370,7 @@
                     if (isTracking) {
                         video.play().catch(e => console.error("AR video play error (orientationchange):", e));
                     }
-                }, 300); // 300ms is usually enough for the UI to update on iOS
+                }, 600); // 600ms is a safe window for the UI rotation animation to finish
             });
 
             // Also handle document visibility change (if user switches apps and comes back)
