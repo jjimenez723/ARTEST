@@ -166,7 +166,7 @@
                 padding: 16px;
                 overflow-y: auto;
             }
-            
+
             .content-box {
                 padding: 24px;
                 width: 100%;
@@ -178,17 +178,17 @@
                 text-align: left;
                 margin: auto;
             }
-            
+
             .content-box h1 {
                 font-size: 20px;
                 margin-bottom: 8px;
             }
-            
+
             .content-box p {
                 font-size: 13px;
                 margin-bottom: 16px;
             }
-            
+
             .instructions {
                 margin-bottom: 0;
                 padding: 16px;
@@ -197,43 +197,43 @@
                 flex-direction: column;
                 justify-content: center;
             }
-            
+
             .instructions ol {
                 font-size: 12px;
                 line-height: 1.5;
             }
-            
+
             .instructions li {
                 margin-bottom: 8px;
             }
-            
+
             #start-btn {
                 padding: 12px 20px;
                 font-size: 13px;
                 width: 100%;
             }
-            
-            .content-box > h1 {
+
+            .content-box>h1 {
                 grid-column: 1;
                 grid-row: 1;
             }
-            
-            .content-box > p {
+
+            .content-box>p {
                 grid-column: 1;
                 grid-row: 2;
             }
-            
-            .content-box > button {
+
+            .content-box>button {
                 grid-column: 1;
                 grid-row: 3;
                 align-self: end;
             }
-            
-            .content-box > .instructions {
+
+            .content-box>.instructions {
                 grid-column: 2;
                 grid-row: 1 / 4;
             }
-            
+
             #agent-link {
                 top: 12px;
                 right: 12px;
@@ -269,8 +269,8 @@
 
     <!-- 2. Scene Configuration -->
     <!-- Note: autoStart is set to false so it waits for the user tap. filterMinCF and filterBeta reduce jitter. -->
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.0001; filterBeta: 10000;" color-space="sRGB"
-        renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.0001; filterBeta: 10000;"
+        color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: false">
 
         <!-- 3. Asset Management (Preloading Video) -->
@@ -325,18 +325,58 @@
                 }
             });
 
+            let isTracking = false;
+
             // Event listener: When the image target is found
             arTarget.addEventListener("targetFound", event => {
                 console.log("MindAR Target Found!");
-                // Play the video
-                video.play();
+                isTracking = true;
+                // Play the video and catch potential playback errors
+                video.play().catch(e => console.error("AR video play error (targetFound):", e));
             });
 
             // Event listener: When the image target is lost
             arTarget.addEventListener("targetLost", event => {
                 console.log("MindAR Target Lost!");
+                isTracking = false;
                 // Pause the video
                 video.pause();
+            });
+
+            // Handle device orientation changes (common issue on iOS devices)
+            window.addEventListener('orientationchange', () => {
+                // iOS Safari often pauses videos and messes up canvas alignment on rotation.
+                // We use a small timeout to let the new window dimensions settle.
+                setTimeout(() => {
+                    // Force the A-Frame scene to resize and update its projection matrix
+                    if (sceneEl.resize) {
+                        sceneEl.resize();
+                    } else {
+                        window.dispatchEvent(new Event('resize'));
+                    }
+
+                    // Find all video elements in the DOM
+                    const allVideos = document.querySelectorAll('video');
+                    allVideos.forEach(v => {
+                        // The OS may pause the hidden camera feed used by MindAR
+                        // Ensure we unpause it so tracking continues
+                        if (v.id !== 'vid' && v.paused) {
+                            v.play().catch(e => console.error("Camera feed play error:", e));
+                        }
+                    });
+
+                    // If the target is still actively tracked, resume the AR overlay video
+                    if (isTracking) {
+                        video.play().catch(e => console.error("AR video play error (orientationchange):", e));
+                    }
+                }, 300); // 300ms is usually enough for the UI to update on iOS
+            });
+
+            // Also handle document visibility change (if user switches apps and comes back)
+            document.addEventListener("visibilitychange", () => {
+                if (document.visibilityState === 'visible' && isTracking) {
+                    video.play().catch(e => console.error("AR video play error (visibilitychange):", e));
+                }
             });
         });
     </script>
