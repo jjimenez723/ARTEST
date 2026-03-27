@@ -123,7 +123,43 @@
         #start-btn:active {
             transform: translateY(1px);
         }
+        #zillow-btn {
+            position: fixed;
+            bottom: 108px;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: max(108px, calc(env(safe-area-inset-bottom) + 60px));
+            z-index: 10000;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 30px;
+            padding: 12px 32px;
+            color: #f8fafc;
+            text-decoration: none;
+            text-align: center;
+            width: max-content;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
 
+        #zillow-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.8);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        #zillow-btn:active {
+            transform: translateY(1px);
+        }
         #agent-link {
             position: fixed;
             top: 48px;
@@ -289,6 +325,14 @@
                 padding: 8px 24px;
                 font-size: 12px;
             }
+
+            #zillow-btn {
+                bottom: 84px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 8px 24px;
+                font-size: 12px;
+            }
         }
 
         #main-video {
@@ -311,6 +355,8 @@
         Dennis Davila's Website</a>
 
     <button id="contact-btn">Save Contact Info</button>
+
+    <button id="zillow-btn" onclick="window.open('https://www.zillow.com/homedetails/10-Frick-Dr-Alpine-NJ-07620/124236838_zpid/', '_blank')">View Zillow Listing</button>
 
     <!-- 5. Mobile Autoplay Handling (HTML UI) -->
     <div id="ui-overlay">
