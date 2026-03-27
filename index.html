@@ -10,8 +10,8 @@
     <link rel="apple-touch-icon" href="favicon.png">
 
     <!-- 1. Library Setup: Import A-Frame and MindAR Extension -->
-    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <!-- <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script> -->
 
     <!-- 5. Mobile Autoplay Handling (Styling) -->
     <style>
@@ -290,6 +290,18 @@
                 font-size: 12px;
             }
         }
+
+        #main-video {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: contain;
+            background-color: #000;
+            z-index: 5000;
+        }
     </style>
 </head>
 
@@ -304,28 +316,23 @@
     <div id="ui-overlay">
         <div class="content-box">
             <h1>Immersive Property Tour</h1>
-            <p>Experience this luxury home in augmented reality.</p>
+            <p>Experience this luxury home.</p>
 
             <div class="instructions">
                 <ol>
-                    <li>Tap the <strong>Start Experience</strong> button below.</li>
-                    <li><strong>Allow</strong> the website to access your camera when prompted.</li>
-                    <li>Hold your phone up to the <strong>property sign</strong> to begin the tour.</li>
+                    <li>Tap the <strong>View Experience</strong> button below to begin the tour.</li>
                 </ol>
             </div>
 
-            <button id="start-btn">Start Experience</button>
+            <button id="start-btn">View Experience</button>
         </div>
     </div>
 
-    <!-- 2. Scene Configuration -->
-    <!-- Note: autoStart is set to false so it waits for the user tap. filterMinCF and filterBeta reduce jitter. -->
+    <!-- AR Integration Commented Out
     <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.0001; filterBeta: 10000;"
         color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: false">
 
-        <!-- 3. Asset Management (Preloading Video) -->
-        <!-- playsinline and webkit-playsinline are crucial for mobile iOS -->
         <a-assets>
             <video id="vid" src="./vid.mp4" preload="auto" loop crossorigin="anonymous" playsinline
                 webkit-playsinline></video>
@@ -333,102 +340,48 @@
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        <!-- 4. The AR Target -->
-        <!-- Width is typically normalized to 1 in MindAR. Height is set dynamically based on video dimensions -->
         <a-entity id="ar-target" mindar-image-target="targetIndex: 0">
             <a-video id="ar-video" src="#vid" position="0 0 0" width="1" height="1" rotation="0 0 0">
             </a-video>
         </a-entity>
     </a-scene>
+    -->
 
-    <!-- 6. Tracking Event Listeners -->
+    <!-- Simple Video Player Replacement -->
+    <video id="main-video" src="./vid.mp4" controls playsinline webkit-playsinline></video>
+
+    <!-- 6. Video Player Event Listeners -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const sceneEl = document.querySelector('a-scene');
             const overlay = document.getElementById('ui-overlay');
             const startBtn = document.getElementById('start-btn');
+            const mainVideo = document.getElementById('main-video');
+
+            /* AR Code Commented Out
+            const sceneEl = document.querySelector('a-scene');
             const video = document.getElementById('vid');
             const arTarget = document.getElementById('ar-target');
             const arVideo = document.getElementById('ar-video');
 
-            // Dynamically set AR video dimensions based on actual video aspect ratio
-            video.addEventListener('loadedmetadata', function () {
-                const aspectRatio = video.videoHeight / video.videoWidth;
-                arVideo.setAttribute('height', aspectRatio);
-            });
+            // ... original AR tracking logic ...
+            */
 
-            // Mobile Autoplay Handling: User must interact with document first
+            // Simple Video Playback Handling
             startBtn.addEventListener('click', function () {
-                // Play and immediately pause to unlock the video context in mobile browsers
-                video.play();
-                video.pause();
-
                 // Hide our custom overlay
                 overlay.style.display = 'none';
 
-                // Start the MindAR camera and tracking system
-                if (sceneEl.hasLoaded) {
-                    sceneEl.systems["mindar-image-system"].start();
-                } else {
-                    sceneEl.addEventListener('loaded', function () {
-                        sceneEl.systems["mindar-image-system"].start();
-                    });
-                }
+                // Show the main video
+                mainVideo.style.display = 'block';
+
+                // Play the video
+                mainVideo.play().catch(e => console.error("Video play error:", e));
             });
 
-            let isTracking = false;
-
-            // Event listener: When the image target is found
-            arTarget.addEventListener("targetFound", event => {
-                console.log("MindAR Target Found!");
-                isTracking = true;
-                // Play the video and catch potential playback errors
-                video.play().catch(e => console.error("AR video play error (targetFound):", e));
-            });
-
-            // Event listener: When the image target is lost
-            arTarget.addEventListener("targetLost", event => {
-                console.log("MindAR Target Lost!");
-                isTracking = false;
-                // Pause the video
-                video.pause();
-            });
-
-            // Handle device orientation changes (common issue on iOS devices)
-            window.addEventListener('orientationchange', () => {
-                // iOS Safari takes time to correctly report new window.innerWidth/Height after rotation.
-                // If MindAR calculates its projection matrix too early, the AR objects become skewed or float off-center.
-                // We dispatch 'resize' events precisely over time to guarantee MindAR correctly re-evaluates the layout.
-                [100, 300, 600, 1000].forEach(delay => {
-                    setTimeout(() => {
-                        window.dispatchEvent(new Event('resize'));
-                    }, delay);
-                });
-
-                // Wait until the layout has mostly settled to unpause playback streams
-                setTimeout(() => {
-                    // Find all video elements in the DOM
-                    const allVideos = document.querySelectorAll('video');
-                    allVideos.forEach(v => {
-                        // The OS may pause the hidden camera feed used by MindAR
-                        // Ensure we unpause it so tracking continues
-                        if (v.id !== 'vid' && v.paused) {
-                            v.play().catch(e => console.error("Camera feed play error:", e));
-                        }
-                    });
-
-                    // If the target is still actively tracked, resume the AR overlay video
-                    if (isTracking) {
-                        video.play().catch(e => console.error("AR video play error (orientationchange):", e));
-                    }
-                }, 600); // 600ms is a safe window for the UI rotation animation to finish
-            });
-
-            // Also handle document visibility change (if user switches apps and comes back)
-            document.addEventListener("visibilitychange", () => {
-                if (document.visibilityState === 'visible' && isTracking) {
-                    video.play().catch(e => console.error("AR video play error (visibilitychange):", e));
-                }
+            // Optional: Re-show overlay when video ends
+            mainVideo.addEventListener('ended', function() {
+                mainVideo.style.display = 'none';
+                overlay.style.display = 'flex';
             });
 
             // Contact Info Download (vCard format)
